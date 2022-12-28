@@ -29,6 +29,8 @@ Run the following command in the terminal to install the packages:
 npm install
 ```
 
+You will also need to install MySQL to your machine and run the schema.sql and seeds.sql files to create the database/tables.
+
 ## Using the Application
 
 Run the following command in the terminal to run the application: 
