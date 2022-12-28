@@ -1,11 +1,12 @@
 const db = require("../db/connection")
 const { prompt } = require("inquirer");
 const { viewAllRoles } = require("./roles");
+const { removeListener } = require("../db/connection");
 
 async function viewAllEmployees() {
     try {
         const employees = 
-            await db.query('SELECT * FROM employee LEFT JOIN role ON role.id = employee.role_id')
+            await db.query('SELECT employee.id, employee.first_name, employee.last_name, title, department.name as department, salary, CONCAT (manag.first_name, " ", manag.last_name) AS manager FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee manag on employee.manager_id = manag.id')
         // console.log(departments)
         return employees
     } catch (err) {
@@ -74,4 +75,59 @@ async function addEmployee() {
     }
 }
 
-module.exports = { viewAllEmployees, addEmployee }
+async function updateRole() {
+    
+    try {
+
+        const currentEmployees = 
+            await db.query('SELECT * FROM employee')
+        
+        console.table(currentEmployees)
+
+        const roles = await viewAllRoles();
+
+        const { employeeId, roleId } = await prompt(
+            [
+                {
+                    type: "list",
+                    name: "employeeId",
+                    message: "Which employee's role would you like to change?",
+                    choices: currentEmployees.map(currentEmployee => {
+                        // return currentEmployee.id
+                        return {
+                            value: currentEmployee.id,
+                            name: `${currentEmployee.first_name} ${currentEmployee.last_name}`
+                        }
+                    }) 
+                },
+                {
+                    type: "list",
+                    name: "roleId",
+                    message: "What role will the employee change to?",
+                    choices: roles.map(role => {
+                        return {
+                            value: role.id,
+                            name: role.title
+                        }
+                    }) 
+                },
+
+            ]
+        )
+
+        console.log("roleid = ", roleId)
+        console.log("employeeid = ", employeeId)
+
+        await db.query(`UPDATE employee SET role_id = ${roleId} WHERE id = ${employeeId}`)
+        
+        const newEmployees = await viewAllEmployees()
+        
+        return newEmployees
+
+    } catch (err) {
+
+    }
+    
+}
+
+module.exports = { viewAllEmployees, addEmployee, updateRole }

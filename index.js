@@ -1,9 +1,9 @@
 
 const { prompt } = require("inquirer");
 const db = require("./db/connection");
-const { viewAllDepartments } = require("./utils/departments")
-const { viewAllEmployees, addEmployee } = require("./utils/employees")
-const { viewAllRoles } = require("./utils/roles")
+const { viewAllDepartments, addDepartment } = require("./utils/departments")
+const { viewAllEmployees, addEmployee, updateRole } = require("./utils/employees")
+const { viewAllRoles, addRole } = require("./utils/roles")
 
 mainMenu = [
     {
@@ -32,18 +32,37 @@ const start = async () => {
             const departments = await viewAllDepartments()
             console.table(departments)
             break;
-        case 'View all employees':
-            const employees = await viewAllEmployees()
-            console.table(employees)
-            break;
+            
         case 'View all roles':
             const roles = await viewAllRoles()
             console.table(roles)
             break;
+
+        case 'View all employees':
+            const employees = await viewAllEmployees()
+            console.table(employees)
+            break;
+
+        case 'Add a department':
+            const newDepartments = await addDepartment()
+            console.table(newDepartments)
+            break;
+
+        case 'Add a role':
+            const newRoles = await addRole()
+            console.table(newRoles)
+            break;
+
         case 'Add an employee':
             const newEmployees = await addEmployee()
             console.table(newEmployees)
             break;
+
+        case 'Update an employee role':
+            const updatedEmployees = await updateRole()
+            console.table(updatedEmployees)
+            break;
+
         case 'Exit':
             console.log('Goodbye!')
             process.exit();
