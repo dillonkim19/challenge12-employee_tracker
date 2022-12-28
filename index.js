@@ -2,7 +2,8 @@
 const { prompt } = require("inquirer");
 const db = require("./db/connection");
 const { viewAllDepartments } = require("./utils/departments")
-const { viewAllEmployees } = require("./utils/employees")
+const { viewAllEmployees, addEmployee } = require("./utils/employees")
+const { viewAllRoles } = require("./utils/roles")
 
 mainMenu = [
     {
@@ -23,7 +24,7 @@ mainMenu = [
 ]
 
 const start = async () => {
-    console.log("Welcome to the Employee Manager!");
+    
     const { choice } = await prompt(mainMenu);
 
     switch (choice) {
@@ -35,8 +36,22 @@ const start = async () => {
             const employees = await viewAllEmployees()
             console.table(employees)
             break;
+        case 'View all roles':
+            const roles = await viewAllRoles()
+            console.table(roles)
+            break;
+        case 'Add an employee':
+            const newEmployees = await addEmployee()
+            console.table(newEmployees)
+            break;
+        case 'Exit':
+            console.log('Goodbye!')
+            process.exit();
     }
+    start();
+
     
 }
 
+console.log("Welcome to the Employee Manager!");
 start();
